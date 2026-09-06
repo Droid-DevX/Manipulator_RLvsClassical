@@ -1,0 +1,14 @@
+<mujoco model="pick and place scene">
+  <include file="mujoco_menagerie/franka_emika_panda/scene.xml"/>
+
+  <worldbody>
+    <body name="object" pos="0.45 0.0 0.05">
+      <freejoint/>
+      <geom name="object_geom" type="box" size="0.02 0.02 0.02" rgba="0.8 0.2 0.2 1" mass="0.05" friction="1.0 0.005 0.0001"/>
+    </body>
+
+    <body name="target_marker" pos="0.45 -0.3 0.02" mocap="true">
+      <geom type="cylinder" size="0.03 0.001" rgba="0 1 0 0.4" contype="0" conaffinity="0"/>
+    </body>
+  </worldbody>
+</mujoco>
