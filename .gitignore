@@ -3,3 +3,5 @@ __pycache__/
 *.pyc
 mujoco_env/
 .vscode/
+models/
+logs/
