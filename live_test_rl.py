@@ -33,10 +33,6 @@ if __name__ == "__main__":
     # transforms observations, it doesn't expose the sim itself).
     raw_env = venv.venv.envs[0]
 
-    # The current environment advances 20 MuJoCo physics steps per PPO
-    # action. Pace against that actual simulated duration.
-    sim_dt_per_action = raw_env.model.opt.timestep * 20
-
     with mujoco.viewer.launch_passive(raw_env.model, raw_env.data) as viewer:
         # Let PandaPickPlaceEnv sync this same viewer during physics
         # substeps. This gives smoother motion than one sync per PPO action.
@@ -56,21 +52,11 @@ if __name__ == "__main__":
             print(f"\n--- Episode {ep} ---")
             while not done and viewer.is_running():
                 action, _ = model.predict(obs, deterministic=True)
-                step_t0 = time.perf_counter()
-
                 obs, reward, done_arr, infos = venv.step(action)
                 done = bool(done_arr[0])
                 info = infos[0]
                 ep_reward += float(reward[0])
                 steps += 1
-
-                viewer.sync()
-
-                # Only sleep for the remainder of the simulated action time.
-                # This avoids the extra fixed delay that made playback feel
-                # unnecessarily slow.
-                elapsed = time.perf_counter() - step_t0
-                time.sleep(max(0.0, sim_dt_per_action - elapsed))
 
             print(f"steps={steps}  total_reward={ep_reward:.1f}  "
                   f"success={info.get('success')}  "
